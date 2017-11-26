@@ -1,4 +1,4 @@
-firmware/
-DHT/
-lib/
+Adafruit_DHT_Library/
+LiquidCrystal_I2C_Spark/
+bin/
 *.bin
