@@ -5,13 +5,6 @@
 
 struct LcdController {
   LcdController();
-  void timerIsr();
-
-private:
-  int currHour;
-  int currMinute;
-  int currSecond;
-
   void updateScreen();
 };
 

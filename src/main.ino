@@ -35,7 +35,7 @@ DHT Sensor4(TEMP4, DHT11);
 // BMP baro();
 
 LcdController lcdController;
-Timer timer(1000, &LcdController::timerIsr, lcdController);
+Timer timer(1000, &timerIsr);
 
 int counter = 0;
 
@@ -53,16 +53,6 @@ Index number gives the left shift amount (0x01 << index);
 
 // get init value for devices from server
 int devices = 0x00;
-
-// Masks for relay-operated devices
-int device1 = 0x01;
-int device2 = 0x02;
-int device3 = 0x04;
-int device4 = 0x08;
-int device5 = 0x10;
-int device6 = 0x20;
-int device7 = 0x40;
-int device8 = 0x80;
 
 int currHour = 0;
 int currMinute = 0;
@@ -123,10 +113,17 @@ void myHandler(const char *topic, const char *data) {
   updateRelaysFlag = 1;
 }
 
-void updateRelays() {
-  // clear updateRelays flag
-  updateRelaysFlag = 0;
-  updateShiftRegister(devices);
+void timerIsr() {
+  // Runs every second
+  currSecond = Time.second();
+  if (currSecond == 0) {
+    currMinute = Time.minute();
+
+    if (currMinute == 0) {
+      currHour = Time.hour();
+}
+  }
+  lcdController.updateScreen();
 }
 
 void updateSensor(int sensor) {
