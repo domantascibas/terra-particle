@@ -1,0 +1,4 @@
+# particle.ignore
+.ds_store
+*/firmware/examples/*
+lib/*

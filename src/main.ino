@@ -1,8 +1,7 @@
 #include "Particle.h"
-#include "lib/LiquidCrystal_I2C_Spark.h"
-#include "lib/Adafruit_DHT.h"
-//#include "Adafruit_BMP085.h"
-#include "lib/SparkJson/SparkJson.h"
+#include "LiquidCrystal_I2C_Spark.h"
+#include "Adafruit_DHT.h"
+// #include "lib/SparkJson/SparkJson.h"
 
 #define LED D7
 //#define LAMP D4
@@ -192,7 +191,7 @@ void timerIsr() {
 void updateLcd() {
   updateLcdFlag = 0;
   lcd->setCursor(0,0);
-  lcd->print(Time.format(Time.local(), "%H:%M:%S"));
+  lcd->print(Time.format(Time.now(), "%H:%M:%S"));
   /*lcd->print(autoTimer[2][0]);
   lcd->print(":");
   lcd->print(autoTimer[2][1]);

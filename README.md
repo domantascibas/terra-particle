@@ -4,7 +4,8 @@ This is a Particle-based terrarium controller implemented on a RedBear Duo board
 More on Particle: https://github.com/spark
 
 ## Libraries used
-https://github.com/vitiral/DHT
+https://github.com/russgrue/Adafruit_DHT_Library
+https://github.com/BulldogLowell/LiquidCrystal_I2C_Spark
 
 ### Issues/things to fix
 
