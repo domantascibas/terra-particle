@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "Adafruit_DHT.h"
+#include "RelayController.h"
 #include "LcdController.h"
 
 /*
@@ -13,9 +14,17 @@ Project parts:
 
 */
 
-#define LED D7
-//#define LAMP D4
-//#define IRLAMP D5
+enum DeviceId
+{
+  UV_LIGHT = 0x01,
+  REGULAR_LIGHT = 0x02,
+  IR_LIGHT = 0x04,
+  HEATED_ROCK = 0x08,
+  HEATED_CABLE = 0x10,
+  NC = 0x20,
+  FOGGER = 0x40,
+  VENTILATORS = 0x80
+};
 
 // Three DHT22 sensors connected to pins A4-6
 // One DHT11 sensor connected to pin A7
@@ -34,6 +43,7 @@ DHT Sensor3(TEMP3, DHT11);
 DHT Sensor4(TEMP4, DHT11);
 // BMP baro();
 
+RelayController relayController;
 LcdController lcdController;
 Timer timer(1000, &timerIsr);
 
@@ -121,7 +131,7 @@ void timerIsr() {
 
     if (currMinute == 0) {
       currHour = Time.hour();
-}
+    }
   }
   lcdController.updateScreen();
 }
@@ -182,10 +192,11 @@ void updateSensor(int sensor) {
 int getRelaysFromServer(String command) {
   devices = atoi(command);
   updateRelaysFlag = 1;
+  return 0;
 }
 
 int getNextStatesFromServer() {
-
+  return 0;
 }
 
 int sendStatesToServer(const char *deviceId, int state) {
@@ -193,6 +204,7 @@ int sendStatesToServer(const char *deviceId, int state) {
   /*snprintf(buffer, sizeof(buffer), "", deviceId, state);*/
   snprintf(buffer, sizeof(buffer),"{\"devicesState\":%d}",devices);
   Particle.publish(PUBLISH_DEVICES_STATE, buffer, PRIVATE);
+  return 0;
 }
 
 void sendDataToServer(int sensor) {
@@ -218,12 +230,6 @@ void sendDataToServer(int sensor) {
   }
 }
 
-void updateShiftRegister(int data) {
-  digitalWrite(D5, LOW);
-  shiftOut(D2, D4, MSBFIRST, data);
-  digitalWrite(D5, HIGH);
-}
-
 void checkAutoTimer() {
   checkAutoTimerFlag = 0;
   int pushUpdates = 0;
@@ -233,9 +239,9 @@ void checkAutoTimer() {
     if((autoTimerOn[i][0] == currHour) && (autoTimerOn[i][1] == currMinute)) {
       int turnOn = autoTimerOn[i][2];
       if(turnOn) {
-        devices = devices | (0x1 << i);
+        relayController.turnOn(i);
       } else {
-        devices = devices & ~(0x1 << i);
+        relayController.turnOff(i);
       }
       pushUpdates = 1;
     }
@@ -243,9 +249,9 @@ void checkAutoTimer() {
     if((autoTimerOff[i][0] == currHour) && (autoTimerOff[i][1] == currMinute)) {
       int turnOn = autoTimerOff[i][2];
       if(turnOn) {
-        devices = devices | (0x1 << i);
+        relayController.turnOn(i);
       } else {
-        devices = devices & ~(0x1 << i);
+        relayController.turnOff(i);
       }
       pushUpdates = 1;
     }
@@ -268,22 +274,22 @@ void startUp(void) {
   for(i=0; i<8; i++) {
     if(autoTimerOn[i][0] < autoTimerOff[i][0]) {
       if((autoTimerOn[i][0] < currHour) && (currHour < autoTimerOff[i][0])) {
-        devices = devices | (0x1 << i);
+        relayController.turnOn(i);
       } else {
-        devices = devices & ~(0x1 << i);
+        relayController.turnOff(i);
       }
     } else if(autoTimerOn[i][0] > autoTimerOff[i][0]) {
       if((autoTimerOn[i][0] < currHour) || (currHour < autoTimerOff[i][0])) {
-        devices = devices | (0x1 << i);
+        relayController.turnOn(i);
       } else {
-        devices = devices & ~(0x1 << i);
+        relayController.turnOff(i);
       }
     } else {
       int turnOn = autoTimerOn[i][2];
       if(turnOn) {
-        devices = devices | (0x1 << i);
+        relayController.turnOn(i);
       } else {
-        devices = devices & ~(0x1 << i);
+        relayController.turnOff(i);
       }
     }
   }
@@ -291,23 +297,9 @@ void startUp(void) {
 }
 
 void setup(void) {
-  /*Serial.begin(9600);*/
-
   // BMP180 address 0x77
 
   Time.zone(2);
-//  SPI.begin();
-//  SPI.setBitOrder(MSBFIRST);
-//  SPI.setClockSpeed(15000000);
-
-  // MOSI   D2 - p14
-  // SCK    D4 - p11
-  // SS     D5 - p12
-  pinMode(D2, OUTPUT);
-  pinMode(D4, OUTPUT);
-  pinMode(D5, OUTPUT);
-  // Added 10uF caps on Vcc for 595 and ULN2803. Could use 100nF instead
-  // Additionally added 1uF cap on latch pin (p12/D4) to filter AC noise
 
   currHour = Time.hour();
   currMinute = Time.minute();
@@ -387,9 +379,6 @@ void setup(void) {
   Sensor3.begin();
   Sensor4.begin();
   //bmp.begin();
-//  pinMode(LED, OUTPUT);
-//  pinMode(LAMP, OUTPUT);
-//  pinMode(IRLAMP, OUTPUT);
 
   Particle.function("relayUpdate", getRelaysFromServer);
 
@@ -400,10 +389,6 @@ void setup(void) {
 }
 
 void loop(void) {
-  if(updateRelaysFlag == 1) {
-    updateRelays();
-  }
-
   if(updateSensorFlag != 0) {
     updateSensor(updateSensorFlag);
   }
@@ -415,8 +400,4 @@ void loop(void) {
   if(checkAutoTimerFlag == 1) {
     checkAutoTimer();
   }
-
-  /*if(sendStatesToServerFlag == 1) {
-    sendStatesToServer();
-  }*/
 }
