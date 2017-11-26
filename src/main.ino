@@ -2,6 +2,7 @@
 #include "Adafruit_DHT.h"
 #include "RelayController.h"
 #include "LcdController.h"
+#include "SensorController.h"
 
 /*
 
@@ -14,8 +15,7 @@ Project parts:
 
 */
 
-enum DeviceId
-{
+enum DeviceId {
   UV_LIGHT = 0x01,
   REGULAR_LIGHT = 0x02,
   IR_LIGHT = 0x04,
@@ -26,26 +26,12 @@ enum DeviceId
   VENTILATORS = 0x80
 };
 
-// Three DHT22 sensors connected to pins A4-6
-// One DHT11 sensor connected to pin A7
-#define TEMP1 A4
-#define TEMP2 A5
-#define TEMP3 A6
-#define TEMP4 A7
-
-// Sensor 1: far side from control box, on the shelf
-// Sensor 2: far side from control box, in the rocks
-// Sensor 3: on the wall next to the control box
-// Sensor 4: inside the carcass above the mid-light
-DHT Sensor1(TEMP1, DHT22);
-DHT Sensor2(TEMP2, DHT22);
-DHT Sensor3(TEMP3, DHT11);
-DHT Sensor4(TEMP4, DHT11);
 // BMP baro();
-
 RelayController relayController;
+SensorController sensorController;
 LcdController lcdController;
 Timer timer(1000, &timerIsr);
+// Timer sensorUpdater(5000, &sensorIsr);
 
 int counter = 0;
 
@@ -133,60 +119,12 @@ void timerIsr() {
       currHour = Time.hour();
     }
   }
-  lcdController.updateScreen();
+  updateSensorFlag = 1;
+  lcdController.updateScreen(0.00, 0);
 }
 
-void updateSensor(int sensor) {
-  updateSensorFlag = 0;
-  switch(sensor) {
-    case 1:
-      s1t = Sensor1.getTempCelcius();
-      s1h = Sensor1.getHumidity();
-
-      currTemp = s1t;
-      currHumid = s1h;
-      currSensor = 1;
-      // send sensor vals to server
-    break;
-
-    case 2:
-      s2t = Sensor2.getTempCelcius();
-      s2h = Sensor2.getHumidity();
-
-      currTemp = s2t;
-      currHumid = s2h;
-      currSensor = 2;
-      // send sensor vals to server
-    break;
-
-    case 3:
-      s3t = Sensor3.getTempCelcius();
-      s3h = Sensor3.getHumidity();
-
-      currTemp = s3t;
-      currHumid = s3h;
-      currSensor = 3;
-      // send sensor vals to server
-    break;
-
-    case 4:
-      s4t = Sensor4.getTempCelcius();
-      s4h = Sensor4.getHumidity();
-
-      currTemp = s4t;
-      currHumid = s4h;
-      currSensor = 4;
-      // send sensor vals to server
-    break;
-
-    default:
-    break;
-  }
-  if(isnan(currHumid) || isnan(currTemp)) {
-    sensorError = 1;
-  } else {
-    sensorError = 0;
-  }
+void sensorIsr() {
+  currTemp = sensorController.update();
 }
 
 int getRelaysFromServer(String command) {
@@ -374,10 +312,11 @@ void setup(void) {
 
   startUp();
 
-  Sensor1.begin();
-  Sensor2.begin();
-  Sensor3.begin();
-  Sensor4.begin();
+  // // Sensor1.begin();
+  // s1.start();
+  // s2.start();
+  // s3.start();
+  // s4.start();
   //bmp.begin();
 
   Particle.function("relayUpdate", getRelaysFromServer);
@@ -386,12 +325,14 @@ void setup(void) {
   /*Particle.publish("terario-devices", "", PRIVATE);*/
 
   timer.start();
+  // sensorUpdater.start();
 }
 
 void loop(void) {
-  if(updateSensorFlag != 0) {
-    updateSensor(updateSensorFlag);
-  }
+  // if(updateSensorFlag != 0) {
+  //   updateSensor(updateSensorFlag);
+  // }
+  updateSensorFlag = 0;
 
   if(sendDataFlag != 0) {
     sendDataToServer(sendDataFlag);
