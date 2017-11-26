@@ -5,7 +5,7 @@
 
 struct LcdController {
   LcdController();
-  void updateScreen();
+  void updateScreen(float, uint8_t);
 };
 
 #endif
