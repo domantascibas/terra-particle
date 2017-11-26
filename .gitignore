@@ -1,1 +1,4 @@
-bin/*
+firmware/
+DHT/
+lib/
+*.bin
