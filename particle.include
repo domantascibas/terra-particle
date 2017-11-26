@@ -1,0 +1,6 @@
+# particle.include
+src/main.ino
+src/*.cpp
+src/*.h
+LiquidCrystal_I2C_Spark/firmware/*
+Adafruit_DHT_Library/firmware/*
