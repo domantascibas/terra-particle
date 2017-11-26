@@ -1,7 +1,17 @@
 #include "Particle.h"
-#include "LiquidCrystal_I2C_Spark.h"
 #include "Adafruit_DHT.h"
-// #include "lib/SparkJson/SparkJson.h"
+#include "LcdController.h"
+
+/*
+
+Project parts:
+- Relay controller (controls relays)
+- LCD controller (controls lcd display)
+- Sensor controller (controls and reads sensor data)
+- Terra controller (connects relays with sensors)
+- Wifi controller (allows to switch on/off devices over wifi)
+
+*/
 
 #define LED D7
 //#define LAMP D4
@@ -24,8 +34,8 @@ DHT Sensor3(TEMP3, DHT11);
 DHT Sensor4(TEMP4, DHT11);
 // BMP baro();
 
-LiquidCrystal_I2C *lcd;
-Timer timer(1000, timerIsr);
+LcdController lcdController;
+Timer timer(1000, &LcdController::timerIsr, lcdController);
 
 int counter = 0;
 
@@ -109,129 +119,8 @@ const char *PUBLISH_DEVICE_SINGLE_STATE = "terario-single-state";
 //void getDataHandler(const char *topic, const char *data);
 
 void myHandler(const char *topic, const char *data) {
-  //StaticJsonBuffer<256> jsonBuffer;
-  //char *mutableCopy = strdup(data);
-  //JsonObject& root = jsonBuffer.parseObject(mutableCopy);
-  //free(mutableCopy);
-
   devices = atoi(data);
   updateRelaysFlag = 1;
-}
-
-void timerIsr() {
-  // Runs every second
-  //updateShiftRegister(counter);
-  //SPI.transfer(counter);
-  currSecond = Time.second();
-
-  switch(currSecond) {
-    case 0:
-      updateSensorFlag = 1;
-      updateRelaysFlag = 1;
-      currMinute = Time.minute();
-      if((lastMinute < currMinute) && ((currMinute - lastMinute) > 2)) {
-        lastMinute = currMinute;
-        /*startSendingDataFlag = 1;*/
-      } else if((lastMinute > currMinute) && ((lastMinute - currMinute) > 2)) {
-        lastMinute = currMinute;
-        /*startSendingDataFlag = 1;*/
-      } else {
-        startSendingDataFlag = 0;
-      }
-      if(currMinute == 0) {
-        currHour = Time.hour();
-        //set flag to check if need to toggle relays
-      }
-    break;
-
-    case 10:
-      if((startSendingDataFlag != 0) && (!sensorError)) {
-        sendDataFlag = 1;
-      }
-    break;
-
-    case 15:
-      updateSensorFlag = 2;
-    break;
-
-    case 25:
-      if((startSendingDataFlag != 0) && (!sensorError)) {
-        sendDataFlag = 2;
-      }
-    break;
-
-    case 30:
-      updateSensorFlag = 3;
-    break;
-
-    case 35:
-    checkAutoTimerFlag = 1;
-    break;
-
-    case 40:
-      if((startSendingDataFlag != 0) && (!sensorError)) {
-        sendDataFlag = 3;
-      }
-    break;
-
-    case 45:
-      updateSensorFlag = 4;
-    break;
-
-    case 55:
-      if((startSendingDataFlag != 0) && (!sensorError)) {
-        sendDataFlag = 4;
-      }
-    break;
-  }
-  updateLcdFlag = 1;
-  /*counter++;*/
-}
-
-void updateLcd() {
-  updateLcdFlag = 0;
-  lcd->setCursor(0,0);
-  lcd->print(Time.format(Time.now(), "%H:%M:%S"));
-  /*lcd->print(autoTimer[2][0]);
-  lcd->print(":");
-  lcd->print(autoTimer[2][1]);
-  lcd->print(":");
-  lcd->print(autoTimer[2][2]);*/
-  lcd->setCursor(14, 0);
-
-  switch(currSensor) {
-    case 1:
-      lcd->print("S1");
-    break;
-
-    case 2:
-      lcd->print("S2");
-    break;
-
-    case 3:
-      lcd->print("S3");
-    break;
-
-    case 4:
-      lcd->print("S4");
-    break;
-
-    default:
-    break;
-  }
-
-  lcd->setCursor(0,1);
-  //lcd->print(received);
-  if((currHumid || currTemp) == 0.00) {
-    lcd->print("Waiting for data");
-  } else if(sensorError){
-    lcd->print("Sensor Error    ");
-  } else {
-    lcd->print("H:");
-    lcd->print(currHumid);
-    lcd->print("% T:");
-    lcd->print(currTemp);
-  }
 }
 
 void updateRelays() {
@@ -407,12 +296,7 @@ void startUp(void) {
 void setup(void) {
   /*Serial.begin(9600);*/
 
-  // LCD address 0x3F
   // BMP180 address 0x77
-  lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
-  lcd->init();
-  lcd->clear();
-  lcd->backlight();
 
   Time.zone(2);
 //  SPI.begin();
@@ -519,10 +403,6 @@ void setup(void) {
 }
 
 void loop(void) {
-  if(updateLcdFlag == 1) {
-    updateLcd();
-  }
-
   if(updateRelaysFlag == 1) {
     updateRelays();
   }
