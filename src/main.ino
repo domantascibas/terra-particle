@@ -249,8 +249,8 @@ void setup(void) {
   autoTimerOn[0][1] = 30;
   autoTimerOn[0][2] = true;
   //Daylight ON
-  autoTimerOn[1][0] = 8;
-  autoTimerOn[1][1] = 10;
+  autoTimerOn[1][0] = 10;
+  autoTimerOn[1][1] = 30;
   autoTimerOn[1][2] = true;
   //IR ON
   autoTimerOn[2][0] = 0;
@@ -282,8 +282,8 @@ void setup(void) {
   autoTimerOff[0][1] = 30;
   autoTimerOff[0][2] = false;
   //Daylight OFF
-  autoTimerOff[1][0] = 19;
-  autoTimerOff[1][1] = 10;
+  autoTimerOff[1][0] = 17;
+  autoTimerOff[1][1] = 30;
   autoTimerOff[1][2] = false;
   //IR OFF
   autoTimerOff[2][0] = 0;
