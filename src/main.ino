@@ -114,6 +114,7 @@ void timerIsr() {
   currSecond = Time.second();
   if (currSecond == 0) {
     currMinute = Time.minute();
+    checkAutoTimerFlag = 1;
 
     if (currMinute == 0) {
       currHour = Time.hour();
@@ -210,6 +211,7 @@ void checkAutoTimer() {
 void startUp(void) {
   int i;
   for(i=0; i<8; i++) {
+    // TODO: fix startup code. current checks aren't accurate enough
     if(autoTimerOn[i][0] < autoTimerOff[i][0]) {
       if((autoTimerOn[i][0] < currHour) && (currHour < autoTimerOff[i][0])) {
         relayController.turnOn(i);
@@ -245,19 +247,19 @@ void setup(void) {
   lastMinute = currMinute;
 
   //UV ON
-  autoTimerOn[0][0] = 10;
-  autoTimerOn[0][1] = 30;
+  autoTimerOn[0][0] = 9;
+  autoTimerOn[0][1] = 51;
   autoTimerOn[0][2] = true;
   //Daylight ON
-  autoTimerOn[1][0] = 10;
-  autoTimerOn[1][1] = 29;
+  autoTimerOn[1][0] = 9;
+  autoTimerOn[1][1] = 10;
   autoTimerOn[1][2] = true;
   //IR ON
   autoTimerOn[2][0] = 0;
   autoTimerOn[2][1] = 0;
   autoTimerOn[2][2] = true;
   //Rock ON
-  autoTimerOn[3][0] = 17;
+  autoTimerOn[3][0] = 16;
   autoTimerOn[3][1] = 30;
   autoTimerOn[3][2] = true;
   //Cable ON
@@ -283,7 +285,7 @@ void setup(void) {
   autoTimerOff[0][2] = false;
   //Daylight OFF
   autoTimerOff[1][0] = 17;
-  autoTimerOff[1][1] = 31;
+  autoTimerOff[1][1] = 30;
   autoTimerOff[1][2] = false;
   //IR OFF
   autoTimerOff[2][0] = 0;
@@ -291,7 +293,7 @@ void setup(void) {
   autoTimerOff[2][2] = true;
   //Rock OFF
   autoTimerOff[3][0] = 10;
-  autoTimerOff[3][1] = 30;
+  autoTimerOff[3][1] = 10;
   autoTimerOff[3][2] = false;
   //Cable OFF
   autoTimerOff[4][0] = 0;
