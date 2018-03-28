@@ -240,7 +240,7 @@ void setup(void) {
   lcdController.init();
   // BMP180 address 0x77
 
-  Time.zone(2);
+  Time.zone(3);
 
   currHour = Time.hour();
   currMinute = Time.minute();
