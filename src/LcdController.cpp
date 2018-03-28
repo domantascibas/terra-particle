@@ -14,6 +14,9 @@ Sensor s1(TEMP1, DHT22, "1UD86RVLUEi85Tv04hmAOhgg06IS");
 LcdController::LcdController() {
   // LCD address 0x3F
   lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
+}
+
+void LcdController::init() {
   lcd->init();
   lcd->clear();
   lcd->backlight();

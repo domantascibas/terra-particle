@@ -237,6 +237,7 @@ void startUp(void) {
 }
 
 void setup(void) {
+  lcdController.init();
   // BMP180 address 0x77
 
   Time.zone(2);
