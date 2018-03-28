@@ -42,8 +42,10 @@ void LcdController::updateScreen(float val, uint8_t count) {
   lcd->print(avail);
   lcd->setCursor(0,1);
   lcd->print(relayController.getDevicesOn());
-  lcd->setCursor(5,1);
+  lcd->setCursor(4,1);
   lcd->print(temp);
-  lcd->setCursor(11,1);
+  lcd->setCursor(10,1);
   lcd->print(humid);
+  lcd->setCursor(15,1);
+  lcd->print("%");
 }
