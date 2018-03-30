@@ -23,6 +23,8 @@ void LcdController::init() {
 
 /* Object functions */
 void LcdController::updateScreen() {
+  __disable_irq();
   lcd->setCursor(0, 0);
   lcd->print(Time.format(Time.now(), "%H:%M:%S"));
+  __enable_irq();
 }
