@@ -5,7 +5,7 @@ static const uint8_t LCD_ADDRESS = 0x3F;
 static const uint8_t LCD_WIDTH = 16;
 static const uint8_t LCD_HEIGHT = 2;
 
-/* Objects */
+/* Object instances */
 LiquidCrystal_I2C *lcd;
 
 /* Constructor */
