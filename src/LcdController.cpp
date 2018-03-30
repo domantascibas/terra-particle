@@ -8,6 +8,7 @@ static const uint8_t LCD_HEIGHT = 2;
 /* Object instances */
 LiquidCrystal_I2C *lcd;
 
+/* Public functions */
 /* Constructor */
 LcdController::LcdController(uint16_t refreshRate) : updater(refreshRate, &LcdController::updateScreen, *this) {
   lcd = new LiquidCrystal_I2C(LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
@@ -21,7 +22,7 @@ void LcdController::init() {
   updater.start();
 }
 
-/* Object functions */
+/* Private functions */
 void LcdController::updateScreen() {
   __disable_irq();
   lcd->setCursor(0, 0);

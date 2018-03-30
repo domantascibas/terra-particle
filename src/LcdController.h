@@ -4,11 +4,21 @@
 #include "LiquidCrystal_I2C_Spark.h"
 
 struct LcdController {
+  /* Constructor */
   LcdController(uint16_t);
+
+  /* Public variables */
+  
+  /* Public functions */
   void init();
   
   private:
+  /* Private objects */
   Timer updater;
+
+  /* Private variables */
+  
+  /* Private functions */
   void updateScreen();
 };
 

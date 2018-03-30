@@ -5,7 +5,12 @@
 #include "Adafruit_DHT.h"
 
 struct Sensor {
+  /* Constructor */
   Sensor(uint8_t, uint8_t, String);
+
+  /* Public variables */
+
+  /* Public functions */
   void init();
   bool isPresent();
   bool isNewDataAvailable();
@@ -13,7 +18,11 @@ struct Sensor {
   float getHumidity();
 
   private:
-  void update();
+  /* Private objects */
+  DHT dht;
+  Timer updater;
+
+  /* Private variables */
   float temperature;
   float humidity;
   bool present;
@@ -21,8 +30,9 @@ struct Sensor {
   bool sensorBusy;
   uint8_t sensorType;
   String externalId;
-  DHT dht;
-  Timer updater;
+  
+  /* Private functions */
+  void update();
 };
 
 #endif
