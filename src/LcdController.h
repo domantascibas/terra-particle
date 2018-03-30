@@ -6,10 +6,10 @@
 struct LcdController {
   LcdController(uint16_t);
   void init();
-  void updateScreen();
   
   private:
   Timer updater;
+  void updateScreen();
 };
 
 #endif

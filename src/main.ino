@@ -13,7 +13,12 @@ Project parts:
 
 */
 
-LcdController lcdController(1000);
+/* Consts */
+// BMP180 address 0x77
+static const uint8_t TIME_ZONE = 3;
+static const uint16_t LCD_REFRESH_INTERVAL = 1000;
+
+LcdController lcdController(LCD_REFRESH_INTERVAL);
 
 /*
           1 2 3 4 5 6 7 8
@@ -25,10 +30,8 @@ Index number gives the left shift amount (0x01 << index);
 */
 
 void setup(void) {
-  Time.zone(3);
+  Time.zone(TIME_ZONE);
   lcdController.init();
-  // BMP180 address 0x77
-
 }
 
 void loop(void) {

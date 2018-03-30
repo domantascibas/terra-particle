@@ -1,12 +1,19 @@
 #include "LcdController.h"
 
+/* Consts */
+static const uint8_t LCD_ADDRESS = 0x3F;
+static const uint8_t LCD_WIDTH = 16;
+static const uint8_t LCD_HEIGHT = 2;
+
+/* Objects */
 LiquidCrystal_I2C *lcd;
 
+/* Constructor */
 LcdController::LcdController(uint16_t refreshRate) : updater(refreshRate, &LcdController::updateScreen, *this) {
-  // LCD address 0x3F
-  lcd = new LiquidCrystal_I2C(0x3F, 16, 2);
+  lcd = new LiquidCrystal_I2C(LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
 }
 
+/* Initializer */
 void LcdController::init() {
   lcd->init();
   lcd->clear();
@@ -14,6 +21,7 @@ void LcdController::init() {
   updater.start();
 }
 
+/* Object functions */
 void LcdController::updateScreen() {
   lcd->setCursor(0, 0);
   lcd->print(Time.format(Time.now(), "%H:%M:%S"));
