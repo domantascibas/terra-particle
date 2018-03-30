@@ -5,6 +5,7 @@
 
 struct RelayController {
   RelayController();
+  void init();
   void turnOn(uint8_t);
   void turnOff(uint8_t);
   void allOn();

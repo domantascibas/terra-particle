@@ -29,6 +29,9 @@ RelayController::RelayController() {
   pinMode(TERRA_SS, OUTPUT);
 }
 
+/* Initializer */
+void RelayController::init() {
+
 }
 
 /* Object functions */
