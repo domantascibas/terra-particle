@@ -25,16 +25,12 @@ void Sensor::update() {
 }
 
 float Sensor::getTemperature() {
-  __disable_irq();
   if(newDataAvailable) newDataAvailable = false;
-  __enable_irq();
   return temperature;
 }
 
 float Sensor::getHumidity() {
-  __disable_irq();
   if(newDataAvailable) newDataAvailable = false;
-  __enable_irq();
   return humidity;
 }
 
