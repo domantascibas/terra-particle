@@ -26,8 +26,8 @@ NextState [][][][][][][][]  bool
 static const uint8_t TIME_ZONE = 3;
 
 /* Object instances */
-LcdController lcdController;
-SensorController terraControl;
+LcdController lcdControl;
+SensorController sensorControl;
 
 /* Variables */
 float temperature;
@@ -39,17 +39,16 @@ float humidity;
 /* Function implementations */
 void setup(void) {
   Time.zone(TIME_ZONE);
-  lcdController.init();
-  terraControl.init();
+  lcdControl.init();
+  sensorControl.init();
 }
 
 void loop(void) {
-  if(terraControl.isNewDataAvailable()) {
-    temperature = terraControl.getTemperature();
-    humidity = terraControl.getHumidity();
+  if(sensorControl.isNewDataAvailable()) {
+    temperature = sensorControl.getTemperature();
+    humidity = sensorControl.getHumidity();
     Particle.publish("terra/temperature", String(temperature));
     Particle.publish("terra/humidity", String(humidity));
-    // lcdController.updateScreen();
   }
 
   delay(1000);
