@@ -54,5 +54,5 @@ void loop(void) {
     Particle.publish("terra/humidity", String(humidity));
   }
 
-  delay(1000);
+  delay(100);
 }
