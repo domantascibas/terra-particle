@@ -1,27 +1,35 @@
 #ifndef SENSOR_CONTROLLER_H
 #define SENSOR_CONTROLLER_H
 
-#include "Sensor.h"
-
-// Three DHT22 sensors connected to pins A4-6
-// One DHT11 sensor connected to pin A7
-#define TEMP1 A4
-#define TEMP2 A5
-#define TEMP3 A6
-#define TEMP4 A7
+#include "Particle.h"
 
 struct SensorController {
+  /* Constructor */
   SensorController();
+
+  /* Public variables */
+
+  /* Public functions */
   void init();
-  float update();
-  uint8_t getSensorCount();
   float getTemperature();
+  float getHumidity();
+  bool isNewDataAvailable();
+  uint8_t getSensorCount();
 
   private:
+  /* Private objects */
+  Timer updater;
+
+  /* Private variables */
   uint8_t sensorCount;
   bool isFirst;
+  bool newDataAvailable;
   float avgTemperature;
   float avgHumidity;
+
+  /* Private functions */
+  void update();
+
 };
 
 #endif

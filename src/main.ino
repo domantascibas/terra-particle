@@ -1,6 +1,6 @@
 #include "Particle.h"
-#include "Adafruit_DHT.h"
 #include "LcdController.h"
+#include "SensorController.h"
 
 /*
 
@@ -24,10 +24,14 @@ NextState [][][][][][][][]  bool
 /* Consts */
 // BMP180 address 0x77
 static const uint8_t TIME_ZONE = 3;
-static const uint16_t LCD_REFRESH_INTERVAL = 1000;
 
 /* Object instances */
-LcdController lcdController(LCD_REFRESH_INTERVAL);
+LcdController lcdControl;
+SensorController sensorControl;
+
+/* Variables */
+float temperature;
+float humidity;
 
 /* Function definitions */
 
@@ -35,8 +39,17 @@ LcdController lcdController(LCD_REFRESH_INTERVAL);
 /* Function implementations */
 void setup(void) {
   Time.zone(TIME_ZONE);
-  lcdController.init();
+  lcdControl.init();
+  sensorControl.init();
 }
 
 void loop(void) {
+  if(sensorControl.isNewDataAvailable()) {
+    temperature = sensorControl.getTemperature();
+    humidity = sensorControl.getHumidity();
+    Particle.publish("terra/temperature", String(temperature));
+    Particle.publish("terra/humidity", String(humidity));
+  }
+
+  delay(1000);
 }
