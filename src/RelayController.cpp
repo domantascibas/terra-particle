@@ -18,9 +18,11 @@ Additionally added 1uF cap on latch pin (p12/D4) to filter AC noise
  */
 
 /* Consts */
-#define TERRA_MOSI D2 // MOSI   D2 - p14
-#define TERRA_SCK D4  // SCK    D4 - p11
-#define TERRA_SS D5   // SS     D5 - p12
+static const uint8_t TERRA_MOSI = D2;     // MOSI   D2 - p14
+static const uint8_t TERRA_SCK = D4;      // SCK    D4 - p11
+static const uint8_t TERRA_SS = D5;       // SS     D5 - p12
+
+/* Global variables */
 
 /* Constructor */
 RelayController::RelayController() {
