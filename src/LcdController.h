@@ -5,7 +5,7 @@
 
 struct LcdController {
   /* Constructor */
-  LcdController(uint16_t);
+  LcdController();
 
   /* Public variables */
   
@@ -20,6 +20,7 @@ struct LcdController {
   
   /* Private functions */
   void updateScreen();
+
 };
 
 #endif
