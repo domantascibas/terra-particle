@@ -26,14 +26,14 @@ NextState [][][][][][][][]  bool
 // BMP180 address 0x77
 static const uint8_t TIME_ZONE = 3;
 
+/* Global variables */
+float temperature;
+float humidity;
+
 /* Object instances */
 LcdController lcdControl;
 SensorController sensorControl;
 RelayController relayControl;
-
-/* Variables */
-float temperature;
-float humidity;
 
 /* Function definitions */
 
