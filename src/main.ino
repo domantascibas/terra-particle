@@ -1,6 +1,7 @@
 #include "Particle.h"
 #include "LcdController.h"
 #include "SensorController.h"
+#include "RelayController.h"
 
 /*
 
@@ -25,13 +26,14 @@ NextState [][][][][][][][]  bool
 // BMP180 address 0x77
 static const uint8_t TIME_ZONE = 3;
 
+/* Global variables */
+float temperature;
+float humidity;
+
 /* Object instances */
 LcdController lcdControl;
 SensorController sensorControl;
-
-/* Variables */
-float temperature;
-float humidity;
+RelayController relayControl;
 
 /* Function definitions */
 
@@ -41,6 +43,7 @@ void setup(void) {
   Time.zone(TIME_ZONE);
   lcdControl.init();
   sensorControl.init();
+  relayControl.init();
 }
 
 void loop(void) {
