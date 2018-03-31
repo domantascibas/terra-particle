@@ -1,6 +1,7 @@
 #include "Particle.h"
 #include "LcdController.h"
 #include "SensorController.h"
+#include "RelayController.h"
 
 /*
 
@@ -28,6 +29,7 @@ static const uint8_t TIME_ZONE = 3;
 /* Object instances */
 LcdController lcdControl;
 SensorController sensorControl;
+RelayController relayControl;
 
 /* Variables */
 float temperature;
@@ -41,6 +43,7 @@ void setup(void) {
   Time.zone(TIME_ZONE);
   lcdControl.init();
   sensorControl.init();
+  relayControl.init();
 }
 
 void loop(void) {
