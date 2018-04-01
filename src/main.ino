@@ -343,5 +343,6 @@ void loop(void) {
 
   if(checkAutoTimerFlag == 1) {
     checkAutoTimer();
+    Particle.publish("terra/devicesOn", String(relayController.getDevicesOn()));
   }
 }
