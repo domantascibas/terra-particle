@@ -1,6 +1,7 @@
 #include "LcdController.h"
 #include "RelayController.h"
 #include "Sensor.h"
+#include "Particle.h"
 
 #define TEMP1 A4
 #define TEMP2 A5
@@ -31,6 +32,8 @@ void LcdController::updateScreen(float val, uint8_t count) {
     avail = true;
     temp = s1.getTemperature();
     humid = s1.getHumidity();
+    Particle.publish("terra/temperature", String(temp));
+    Particle.publish("terra/humidity", String(humid));
   } else {
     avail = false;
   }
